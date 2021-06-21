@@ -1,0 +1,295 @@
+{
+	"info": {
+		"_postman_id": "316d4397-0d1e-4e06-b1b0-8d1d430423dc",
+		"name": "TrelloTest",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create Board",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"var response = pm.response.json();",
+							"",
+							"pm.test(\"Board name is equal {boardName}\", function () {",
+							"    pm.expect(response.name).to.eql(pm.collectionVariables.get(\"boardName\"));",
+							"});    ",
+							"",
+							"pm.test(\"Board ID not null\", function () {",
+							"    pm.expect(response.id).not.to.be.undefined;",
+							"    pm.expect(response.id).not.to.be.null;",
+							"});    ",
+							"",
+							"// save boardID for further requests",
+							"pm.collectionVariables.set(\"boardID\", response.id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/boards/?key={{API_KEY}}&token={{API_TOKEN}}&name={{boardName}}",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"boards",
+						""
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "{{API_KEY}}"
+						},
+						{
+							"key": "token",
+							"value": "{{API_TOKEN}}"
+						},
+						{
+							"key": "name",
+							"value": "{{boardName}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Rename Board",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"var response = pm.response.json();",
+							"",
+							"pm.test(\"New name is correct\", function () {",
+							"    pm.expect(response.name).to.eql(pm.collectionVariables.get(\"newBoardName\"));",
+							"",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/boards/{{boardID}}?key={{API_KEY}}&token={{API_TOKEN}}&name={{newBoardName}}",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"boards",
+						"{{boardID}}"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "{{API_KEY}}"
+						},
+						{
+							"key": "token",
+							"value": "{{API_TOKEN}}"
+						},
+						{
+							"key": "name",
+							"value": "{{newBoardName}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete board",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response value equals null\", function () {",
+							"    pm.expect(pm.response.json()._value).to.be.null;",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/boards/{{boardID}}?key={{API_KEY}}&token={{API_TOKEN}}",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"boards",
+						"{{boardID}}"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "{{API_KEY}}"
+						},
+						{
+							"key": "token",
+							"value": "{{API_TOKEN}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check delete",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// check if board with id = boardID exists",
+							"pm.test(\"Delete is successful. Status code is 404\", function () {",
+							"    pm.response.to.have.status(404);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.trello.com/1/boards/{{boardID}}?key={{API_KEY}}&token={{API_TOKEN}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"trello",
+						"com"
+					],
+					"path": [
+						"1",
+						"boards",
+						"{{boardID}}"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "{{API_KEY}}"
+						},
+						{
+							"key": "token",
+							"value": "{{API_TOKEN}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "oauth1",
+		"oauth1": [
+			{
+				"key": "signatureMethod",
+				"value": "HMAC-SHA1",
+				"type": "string"
+			},
+			{
+				"key": "version",
+				"value": "1.0",
+				"type": "string"
+			},
+			{
+				"key": "addParamsToHeader",
+				"value": false,
+				"type": "boolean"
+			},
+			{
+				"key": "addEmptyParamsToSign",
+				"value": false,
+				"type": "boolean"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"pm.collectionVariables.set(\"variable_key\", \"variable_value\");"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "BASE_URL",
+			"value": "https://api.trello.com/1"
+		},
+		{
+			"key": "API_TOKEN",
+			"value": "c0de5553b5938b702799bec10808cd8044624749a27d142ee7f833abc2fafb64"
+		},
+		{
+			"key": "API_KEY",
+			"value": "13f0c06071ae0aa0a481b26a9f5c2285"
+		},
+		{
+			"key": "boardID",
+			"value": "60ccad116b47b203aded837f"
+		},
+		{
+			"key": "boardName",
+			"value": "Test board"
+		},
+		{
+			"key": "newBoardName",
+			"value": "New Board Name"
+		},
+		{
+			"key": "variable_key",
+			"value": ""
+		}
+	]
+}
